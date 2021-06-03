@@ -1,5 +1,6 @@
 package com.ganesh.commonComponents;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.*;
@@ -246,7 +247,7 @@ public class ReusableComponents {
      */
 
     public void clickIfElementIdPresent(final WebDriver driver, final String elementID) throws Exception {
-
+        ((JavascriptExecutor)driver).executeScript("window.scrollTo(0,document.body.scrollHeight)");
         waitForElementByID(driver, elementID);
         driver.findElement(By.id(elementID)).click();
     }
@@ -275,24 +276,8 @@ public class ReusableComponents {
 
     }
 
-    public void typeIfElementIdPresentPwd(final WebDriver driver, final String elementID, String value, String details)
-            throws Exception {
-        boolean pageloaded = false;
-        try {
 
-            while (!pageloaded) {
-                pageloaded = ((JavascriptExecutor) driver).executeScript("return document.readyState")
-                        .equals("complete");
-            }
-            waitForElementByID(driver, elementID);
-            driver.findElement(By.id(elementID)).sendKeys(value);
-            System.out.println("Entered value->" + value);
 
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-        }
-
-    }
 
     public static void typeIfElementxPATHPresent(final WebDriver driver, final String xpathExpression, String value)
             throws Exception {
@@ -304,26 +289,21 @@ public class ReusableComponents {
 
     }
 
-    public void selectValByEleXpath(final WebDriver driver, final String elementXpath, String value) throws Exception {
-        waitForElementByXPATH(driver, elementXpath);
-        WebElement selectElement = driver.findElement(By.xpath(elementXpath));
-        Select select = new Select(selectElement);
-        List<WebElement> options = select.getOptions();
-        for (WebElement we : options) {
-            System.out.println("Option list: " + we.getText());
-            if (we.getText().equals(value)) {
-                we.click();
-                break;
-            }
-        }
+    public static void hOverElement(final WebDriver driver, final String xpathExpression){
+
+        WebElement element = driver.findElement(By.xpath(xpathExpression));
+        ((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView(true);", element);
+        Actions actions = new Actions(driver);
+        actions.moveToElement(element).perform();
+
 
     }
 
-    public void selectElementByClick(final WebDriver driver, final String elementXpath) throws Exception {
+
+    public String getTextFromElement(final WebDriver driver, final String elementXpath) throws Exception {
         waitForElementByXPATH(driver, elementXpath);
-        WebElement selectElement = driver.findElement(By.xpath(elementXpath));
-        if (selectElement != null)
-            selectElement.click();
+        WebElement element = driver.findElement(By.xpath(elementXpath));
+        return element.getText();
 
     }
 
@@ -337,70 +317,11 @@ public class ReusableComponents {
     }
 
     public static String generateRandomNumber() {
-        DateFormat dateFormat = new SimpleDateFormat("ddHHmmssSSS");
-        Date date = new Date();
-        String newDate = dateFormat.format(date);
-        System.out.println("uniquenumber: " + newDate);
-        return newDate;
-
+        return RandomStringUtils.random(10,true,false);
     }
 
-    public List<WebElement> getObjectsListbyXpath(final WebDriver driver, String value) throws Exception {
 
-        waitForElementPresentByXPATH(driver, value);
-        // Get a list of the options
-        List<WebElement> webElementList = driver.findElements(By.xpath(value));
-        return webElementList;
-    }
 
-    public void clickElementFromList(final WebDriver driver, String xpath, String valueToSelect, String infoDesc)
-            throws Exception {
-
-        List<WebElement> elementList = getObjectsListbyXpath(driver, xpath);
-
-        for (WebElement we : elementList) {
-            if (we.getText().equals(valueToSelect)) {
-                try {
-                    we.click();
-                    break;
-                } catch (Exception exception) {
-                }
-            }
-
-        }
-
-    }
-
-    /**
-     * @Desc : To wait for Element
-     * @param driver
-     * @param elementXPATH
-     */
-    public static void waitForElementPresentByLinkText(final WebDriver driver, final String elementXPATH) {
-
-        try {
-            @SuppressWarnings("deprecation")
-            Wait<WebDriver> wait = new FluentWait<WebDriver>(driver).withTimeout(Duration.ofSeconds(30))
-                    .pollingEvery(Duration.ofSeconds(5)).ignoring(NoSuchElementException.class);
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.linkText(elementXPATH)));
-
-        } catch (Exception exception) {
-
-        }
-
-    }
-
-    /**
-     * @Desc : TO perform click operation By Link Text
-     * @param driver
-     * @param linkText
-     * @param infoDesc
-     */
-    public void findAndClickByLinkText(final WebDriver driver, String linkText, String infoDesc) {
-        waitForElementPresentByLinkText(driver, linkText);
-        WebElement element = driver.findElement(By.linkText(linkText));
-        element.click();
-    }
 
 }
 

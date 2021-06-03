@@ -17,15 +17,20 @@ public class Hooks {
     public void InitializeTest(Scenario scenario) {
         WebDriverManager.chromedriver().setup();
         ChromeOptions chromeOptions = new ChromeOptions();
+        chromeOptions.addArguments("--start-maximized");
+        chromeOptions.setCapability("nativeEvents", false);
+        chromeOptions.addArguments("test-type");
         //chromeOptions.addArguments("--headless");
         this.Driver = new ChromeDriver(chromeOptions);
-       // CommObjects commObjects = new CommObjects();
+        // CommObjects commObjects = new CommObjects();
         CommObjects.setDriver(this.Driver);
     }
 
     @After
     public void CloseBrowser(){
-        if(this.Driver!=null)
+        if(this.Driver!=null){
             this.Driver.quit();
+            System.out.println("Driver quit..");
+        }
     }
 }
