@@ -1,5 +1,6 @@
 package stepDefinitions;
 
+import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -20,5 +21,11 @@ public class Hooks {
         this.Driver = new ChromeDriver(chromeOptions);
        // CommObjects commObjects = new CommObjects();
         CommObjects.setDriver(this.Driver);
+    }
+
+    @After
+    public void CloseBrowser(){
+        if(this.Driver!=null)
+            this.Driver.quit();
     }
 }
